@@ -2,19 +2,14 @@
  * @Author: GZH
  * @Date: 2021-07-12 21:53:00
  * @LastEditors: GZH
- * @LastEditTime: 2021-07-13 06:45:52
- * @FilePath: \knowledgeLibrary\web\src\views\Home.vue
+ * @LastEditTime: 2021-07-13 07:35:45
+ * @FilePath: \web\src\views\Home.vue
  * @Description: 
 -->
 <template>
   <a-layout>
     <a-layout-sider width="200" style="background: #fff">
-      <a-menu
-        mode="inline"
-        v-model:selectedKeys="selectedKeys2"
-        v-model:openKeys="openKeys"
-        :style="{ height: '100%', borderRight: 0 }"
-      >
+      <a-menu mode="inline" :style="{ height: '100%', borderRight: 0 }">
         <a-sub-menu key="sub1">
           <template #title>
             <span>
@@ -55,14 +50,36 @@
     </a-layout-sider>
     <a-layout-content :style="{ background: '#fff', padding: '24px', margin: 0, minHeight: '280px' }">
       Content123
+      <pre>
+        {{ books }}
+     </pre
+      >
     </a-layout-content>
   </a-layout>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent, ref, onMounted, reactive, toRefs } from 'vue';
+import axios from 'axios';
 
 export default defineComponent({
   name: 'Home',
+  setup() {
+    const ebooks = ref();
+    const ebook1 = reactive({ books: [] });
+    onMounted(() => {
+      console.log('onMount');
+      axios.get('http://localhost:8880/ebook/list?name=Vue').then(res => {
+        const { data: { content = [] } = {} } = res;
+        ebooks.value = content;
+        ebook1.books = content;
+      });
+    });
+
+    return {
+      ebooks,
+      ...toRefs(ebook1),
+    };
+  },
 });
 </script>
