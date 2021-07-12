@@ -1,0 +1,57 @@
+[
+  {
+    "id": 1,
+    "name": "springboot 入门教程",
+    "category1Id": null,
+    "category2Id": null,
+    "description": "零基础入门java开发,企业级应用开发首选框架",
+    "cover": null,
+    "docCount": null,
+    "viewCount": null,
+    "voteCount": null
+  },
+  {
+    "id": 2,
+    "name": "vue 入门教程",
+    "category1Id": null,
+    "category2Id": null,
+    "description": "零基础入门vue开发,企业级应用开发首选框架",
+    "cover": null,
+    "docCount": null,
+    "viewCount": null,
+    "voteCount": null
+  },
+  {
+    "id": 3,
+    "name": "Python 入门教程",
+    "category1Id": null,
+    "category2Id": null,
+    "description": "零基础入门Python开发,企业级应用开发首选框架",
+    "cover": null,
+    "docCount": null,
+    "viewCount": null,
+    "voteCount": null
+  },
+  {
+    "id": 4,
+    "name": "Mysql 入门教程",
+    "category1Id": null,
+    "category2Id": null,
+    "description": "零基础入门Mysql开发,企业级应用开发首选框架",
+    "cover": null,
+    "docCount": null,
+    "viewCount": null,
+    "voteCount": null
+  },
+  {
+    "id": 5,
+    "name": "Oracle 入门教程",
+    "category1Id": null,
+    "category2Id": null,
+    "description": "零基础入门Oracle开发,企业级应用开发首选框架",
+    "cover": null,
+    "docCount": null,
+    "viewCount": null,
+    "voteCount": null
+  }
+]
