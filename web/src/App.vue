@@ -2,31 +2,31 @@
  * @Author: GZH
  * @Date: 2021-07-12 21:53:00
  * @LastEditors: GZH
- * @LastEditTime: 2021-07-13 06:57:39
- * @FilePath: \knowledgeLibrary\web\src\App.vue
+ * @LastEditTime: 2021-07-13 07:11:17
+ * @FilePath: \web\src\App.vue
  * @Description: 
 -->
 <template>
-  <!-- <div id="nav">
-    <router-link to="/">Home</router-link> |
-    <router-link to="/about">About</router-link>
-  </div>
-  <router-view/> -->
   <a-layout style="min-height: 100vh">
-    <a-layout-header class="header">
-      <div class="logo" />
-      <a-menu theme="dark" mode="horizontal" v-model:selectedKeys="selectedKeys1" :style="{ lineHeight: '64px' }">
-        <a-menu-item key="1">nav 1</a-menu-item>
-        <a-menu-item key="2">nav 2</a-menu-item>
-        <a-menu-item key="3">nav 3</a-menu-item>
-      </a-menu>
-    </a-layout-header>
+    <the-header />
     <router-view />
-    <a-layout-footer style="text-align: center">
-      电子书
-    </a-layout-footer>
+    <the-footer />
   </a-layout>
 </template>
+
+<script lang="ts">
+import { defineComponent } from 'vue';
+import TheHeader from '@/components/the-header.vue';
+import TheFooter from '@/components/the-footer.vue';
+
+export default defineComponent({
+  name: 'app',
+  components: {
+    TheHeader,
+    TheFooter,
+  },
+});
+</script>
 
 <style>
 #components-layout-demo-top-side-2 .logo {
