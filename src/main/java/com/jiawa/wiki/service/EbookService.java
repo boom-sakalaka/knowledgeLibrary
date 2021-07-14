@@ -7,6 +7,7 @@ import com.jiawa.wiki.domain.EbookExample;
 import com.jiawa.wiki.mapper.EbookMapper;
 import com.jiawa.wiki.req.EbookReq;
 import com.jiawa.wiki.resp.EbookResp;
+import com.jiawa.wiki.resp.PageResp;
 import com.jiawa.wiki.util.CopyUtil;
 
 import org.slf4j.Logger;
@@ -23,14 +24,14 @@ public class EbookService {
     @Resource
     private EbookMapper ebookMapper;
 
-    public List<EbookResp> list(EbookReq req) {
+    public PageResp<EbookResp> list(EbookReq req) {
 
         EbookExample ebookExample = new EbookExample();
         EbookExample.Criteria criteria = ebookExample.createCriteria();
         if(!ObjectUtils.isEmpty(req.getName())){
             criteria.andNameLike("%" + req.getName() + "%");
         }
-        PageHelper.startPage(1, 3);
+        PageHelper.startPage(req.getPage(), req.getSize());
         List<Ebook> ebooks = ebookMapper.selectByExample(ebookExample);
 
         PageInfo<Ebook> pageInfo = new PageInfo<>(ebooks);
@@ -48,6 +49,14 @@ public class EbookService {
         }
 */
 
-        return CopyUtil.copyList(ebooks, EbookResp.class);
+        // 列表复制
+
+        List<EbookResp> list = CopyUtil.copyList(ebooks, EbookResp.class);
+
+        PageResp<EbookResp> pageResp = new PageResp();
+
+        pageResp.setTotal(pageInfo.getTotal());
+        pageResp.setList(list);
+        return pageResp;
     }
 }

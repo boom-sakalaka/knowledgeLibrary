@@ -1,3 +1,15 @@
+GET http://localhost:8880/ebook/list?page=1&size=4
+
+<> 2021-07-14T215050.200.json
+
+###
+
+GET http://localhost:8880/ebook/list?page=1&size=4
+
+<> 2021-07-14T213938.200.json
+
+###
+
 GET http://localhost:8880/ebook/list
 
 <> 2021-07-14T212417.200.json

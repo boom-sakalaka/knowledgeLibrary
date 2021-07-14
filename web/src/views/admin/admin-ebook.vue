@@ -2,7 +2,7 @@
  * @Author: GZH
  * @Date: 2021-07-14 20:11:02
  * @LastEditors: GZH
- * @LastEditTime: 2021-07-14 20:58:09
+ * @LastEditTime: 2021-07-14 21:51:10
  * @FilePath: \web\src\views\admin\admin-ebook.vue
  * @Description: 
 -->
@@ -96,7 +96,7 @@ export default defineComponent({
         loading.value = false;
         const data = response.data;
         if (data.success) {
-          ebooks.value = data.content;
+          ebooks.value = data.content.list;
 
           // 重置分页按钮
           pagination.value.current = params.page;
