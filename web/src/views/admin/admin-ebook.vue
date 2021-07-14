@@ -2,7 +2,7 @@
  * @Author: GZH
  * @Date: 2021-07-14 20:11:02
  * @LastEditors: GZH
- * @LastEditTime: 2021-07-14 21:51:10
+ * @LastEditTime: 2021-07-14 22:00:00
  * @FilePath: \web\src\views\admin\admin-ebook.vue
  * @Description: 
 -->
@@ -48,7 +48,7 @@ export default defineComponent({
     const loading = ref(false);
     const pagination = ref({
       current: 1,
-      pageSize: 10,
+      pageSize: 4,
       total: 0,
     });
     const ebooks = ref();
@@ -92,23 +92,29 @@ export default defineComponent({
       loading.value = true;
       // 如果不清空现有数据，则编辑保存重新加载数据后，再点编辑，则列表显示的还是编辑前的数据
       ebooks.value = [];
-      axios.get('/ebook/list', params).then(response => {
-        loading.value = false;
-        const data = response.data;
-        if (data.success) {
-          ebooks.value = data.content.list;
+      axios
+        .get('/ebook/list', {
+          params: {
+            page: params.page,
+            size: params.size,
+          },
+        })
+        .then(response => {
+          loading.value = false;
+          const data = response.data;
+          if (data.success) {
+            ebooks.value = data.content.list;
 
-          // 重置分页按钮
-          pagination.value.current = params.page;
-          pagination.value.total = data.content.total;
-        } else {
-          message.error(data.message);
-        }
-      });
+            // 重置分页按钮
+            pagination.value.current = params.page;
+            pagination.value.total = data.content.total;
+          } else {
+            message.error(data.message);
+          }
+        });
     };
     const handleTableChange = (pagination: any) => {
-      console.log(pagination);
-      console.log('看看自带的分页参数都有啥：' + pagination);
+      console.log('自带的分页参数：' + pagination);
       handleQuery({
         page: pagination.current,
         size: pagination.pageSize,
@@ -116,7 +122,7 @@ export default defineComponent({
     };
 
     onMounted(() => {
-      handleQuery({});
+      handleQuery({ page: 1, size: pagination.value.pageSize });
     });
     return { columns, loading, pagination, ebooks, handleTableChange };
   },

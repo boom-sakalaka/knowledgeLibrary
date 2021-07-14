@@ -3,7 +3,7 @@
  * @Author: GZH
  * @Date: 2021-07-12 21:53:00
  * @LastEditors: GZH
- * @LastEditTime: 2021-07-13 20:07:45
+ * @LastEditTime: 2021-07-14 22:01:32
  * @FilePath: \web\src\views\Home.vue
  * @Description: 
 -->
@@ -84,11 +84,18 @@ export default defineComponent({
     // const ebook1 = reactive({ books: [] });
     onMounted(() => {
       console.log('onMount');
-      axios.get('/ebook/list').then(res => {
-        const { data: { content = [] } = {} } = res;
-        ebooks.value = content;
-        // ebook1.books = content;
-      });
+      axios
+        .get('/ebook/list', {
+          params: {
+            page: 1,
+            size: 1000,
+          },
+        })
+        .then(res => {
+          const { data: { content: { list = [] } = [] } = {} } = res;
+          ebooks.value = list;
+          // ebook1.books = content;
+        });
     });
 
     const actions = [
