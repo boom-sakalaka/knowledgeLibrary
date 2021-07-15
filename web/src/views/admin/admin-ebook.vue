@@ -2,7 +2,7 @@
  * @Author: GZH
  * @Date: 2021-07-14 20:11:02
  * @LastEditors: GZH
- * @LastEditTime: 2021-07-14 22:00:00
+ * @LastEditTime: 2021-07-15 20:03:00
  * @FilePath: \web\src\views\admin\admin-ebook.vue
  * @Description: 
 -->
@@ -35,6 +35,9 @@
       </a-table>
     </a-layout-content>
   </a-layout>
+  <a-modal title="电子书表单" v-model:visible="modalVisible" :comfirm-loading="modalLoading" @ok="handleModalOk">
+    <p>test</p>
+  </a-modal>
 </template>
 
 <script lang="ts">
@@ -88,6 +91,9 @@ export default defineComponent({
     /**
      * 数据查询
      **/
+    onMounted(() => {
+      handleQuery({ page: 1, size: pagination.value.pageSize });
+    });
     const handleQuery = (params: any) => {
       loading.value = true;
       // 如果不清空现有数据，则编辑保存重新加载数据后，再点编辑，则列表显示的还是编辑前的数据
@@ -121,10 +127,21 @@ export default defineComponent({
       });
     };
 
-    onMounted(() => {
-      handleQuery({ page: 1, size: pagination.value.pageSize });
-    });
-    return { columns, loading, pagination, ebooks, handleTableChange };
+    /* 弹框代码 */
+    const modalVisible = ref(false);
+    const modalLoading = ref(false);
+    const handleModalOk = () => {
+      modalLoading.value = true;
+      setTimeout(() => {
+        modalLoading.value = false;
+        modalVisible.value = false;
+      }, 2000);
+    };
+    const edit = () => {
+      modalVisible.value = true;
+    };
+
+    return { columns, loading, pagination, ebooks, modalVisible, modalLoading, handleModalOk, handleTableChange, edit };
   },
 });
 </script>

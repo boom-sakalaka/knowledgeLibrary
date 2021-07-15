@@ -3,7 +3,7 @@
  * @Author: GZH
  * @Date: 2021-07-12 21:53:00
  * @LastEditors: GZH
- * @LastEditTime: 2021-07-14 22:01:32
+ * @LastEditTime: 2021-07-15 19:57:43
  * @FilePath: \web\src\views\Home.vue
  * @Description: 
 -->
@@ -81,6 +81,7 @@ export default defineComponent({
   name: 'Home',
   setup() {
     const ebooks = ref();
+
     // const ebook1 = reactive({ books: [] });
     onMounted(() => {
       console.log('onMount');
@@ -112,6 +113,7 @@ export default defineComponent({
         text: '2',
       },
     ];
+
     return {
       ebooks,
       // ...toRefs(ebook1),
