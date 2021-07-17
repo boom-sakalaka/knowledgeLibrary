@@ -2,7 +2,7 @@
  * @Author: GZH
  * @Date: 2021-07-14 20:11:02
  * @LastEditors: GZH
- * @LastEditTime: 2021-07-17 08:52:19
+ * @LastEditTime: 2021-07-17 10:38:38
  * @FilePath: \web\src\views\admin\admin-ebook.vue
  * @Description: 
 -->
@@ -30,9 +30,14 @@
               编辑
             </a-button>
 
-            <a-button type="danger">
-              删除
-            </a-button>
+            <a-popconfirm
+              title="删除后不可恢复，确认删除?"
+              ok-text="是"
+              cancel-text="否"
+              @confirm="handleDelete(record.id)"
+            >
+              <a-button type="danger">删除</a-button>
+            </a-popconfirm>
           </a-space>
         </template>
       </a-table>
@@ -184,6 +189,21 @@ export default defineComponent({
       ebook.value = {};
     };
 
+    /* 删除 */
+    const handleDelete = (id: number) => {
+      axios.delete('/ebook/delete/' + id).then(response => {
+        const data = response.data; // data = commonResp
+        if (data.success) {
+          // 重新加载列表
+          handleQuery({
+            page: pagination.value.current,
+            size: pagination.value.pageSize,
+          });
+        } else {
+          message.error(data.message);
+        }
+      });
+    };
     return {
       columns,
       loading,
@@ -196,6 +216,7 @@ export default defineComponent({
       handleTableChange,
       edit,
       add,
+      handleDelete,
     };
   },
 });
