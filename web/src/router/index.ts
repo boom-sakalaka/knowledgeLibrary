@@ -2,7 +2,7 @@
  * @Author: GZH
  * @Date: 2021-07-12 21:53:00
  * @LastEditors: GZH
- * @LastEditTime: 2021-07-14 20:12:49
+ * @LastEditTime: 2021-07-17 14:33:57
  * @FilePath: \web\src\router\index.ts
  * @Description:
  */
@@ -30,6 +30,14 @@ const routes: Array<RouteRecordRaw> = [
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
     component: () => import(/* webpackChunkName: "about" */ '../views/admin/admin-ebook.vue'),
+  },
+  {
+    path: '/admin/category',
+    name: 'AdminCategory',
+    // route level code-splitting
+    // this generates a separate chunk (about.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    component: () => import(/* webpackChunkName: "about" */ '../views/admin/admin-category.vue'),
   },
 ];
 

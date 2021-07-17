@@ -2,7 +2,7 @@
  * @Author: GZH
  * @Date: 2021-07-13 06:59:24
  * @LastEditors: GZH
- * @LastEditTime: 2021-07-14 20:42:01
+ * @LastEditTime: 2021-07-17 14:34:45
  * @FilePath: \web\src\components\the-header.vue
  * @Description: 
 -->
@@ -17,6 +17,9 @@
         <router-link to="/admin/ebook">电子书管理</router-link>
       </a-menu-item>
       <a-menu-item key="3">
+        <router-link to="/admin/category">分类管理</router-link>
+      </a-menu-item>
+      <a-menu-item key="4">
         <router-link to="/about">关于我们</router-link>
       </a-menu-item>
     </a-menu>
