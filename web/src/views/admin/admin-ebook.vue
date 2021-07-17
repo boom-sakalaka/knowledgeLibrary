@@ -2,13 +2,16 @@
  * @Author: GZH
  * @Date: 2021-07-14 20:11:02
  * @LastEditors: GZH
- * @LastEditTime: 2021-07-15 20:03:00
+ * @LastEditTime: 2021-07-17 08:52:19
  * @FilePath: \web\src\views\admin\admin-ebook.vue
  * @Description: 
 -->
 <template>
   <a-layout>
     <a-layout-content :style="{ background: '#fff', padding: '24px', margin: 0, minHeight: '280px' }">
+      <p>
+        <a-button type="primary" @click="add()">新增</a-button>
+      </p>
       <a-table
         :columns="columns"
         :row-key="record => record.id"
@@ -18,7 +21,7 @@
         @change="handleTableChange"
       >
         <template #cover="{ text: cover }">
-          <img v-if="cover" :src="cover" alt="avatar" />
+          <img v-if="cover" :src="cover" alt="avatar" class="img-cover" />
         </template>
 
         <template v-slot:action="{ record }">
@@ -36,7 +39,24 @@
     </a-layout-content>
   </a-layout>
   <a-modal title="电子书表单" v-model:visible="modalVisible" :comfirm-loading="modalLoading" @ok="handleModalOk">
-    <p>test</p>
+    <a-form :model="ebook" :label-col="{ span: 6 }" :wrapper-col="{ span: 18 }">
+      <a-form-item label="封面">
+        <a-input v-model:value="ebook.cover" />
+      </a-form-item>
+      <a-form-item label="名称">
+        <a-input v-model:value="ebook.name" />
+      </a-form-item>
+      <a-form-item label="分类">
+        <a-cascader
+          v-model:value="categoryIds"
+          :field-names="{ label: 'name', value: 'id', children: 'children' }"
+          :options="level1"
+        />
+      </a-form-item>
+      <a-form-item label="描述">
+        <a-input v-model:value="ebook.description" type="textarea" />
+      </a-form-item>
+    </a-form>
   </a-modal>
 </template>
 
@@ -128,22 +148,62 @@ export default defineComponent({
     };
 
     /* 弹框代码 */
+    const ebook = ref();
     const modalVisible = ref(false);
     const modalLoading = ref(false);
     const handleModalOk = () => {
-      modalLoading.value = true;
-      setTimeout(() => {
+      // modalLoading.value = true;
+      // setTimeout(() => {
+      //   modalLoading.value = false;
+      //   modalVisible.value = false;
+      // }, 2000);
+      axios.post('/ebook/save', ebook.value).then(response => {
         modalLoading.value = false;
-        modalVisible.value = false;
-      }, 2000);
+        const data = response.data; // data = commonResp
+        if (data.success) {
+          modalVisible.value = false;
+
+          // 重新加载列表
+          handleQuery({
+            page: pagination.value.current,
+            size: pagination.value.pageSize,
+          });
+        } else {
+          message.error(data.message);
+        }
+      });
     };
-    const edit = () => {
+    const edit = (record: any) => {
       modalVisible.value = true;
+      ebook.value = record;
     };
 
-    return { columns, loading, pagination, ebooks, modalVisible, modalLoading, handleModalOk, handleTableChange, edit };
+    /* 新增 */
+    const add = () => {
+      modalVisible.value = true;
+      ebook.value = {};
+    };
+
+    return {
+      columns,
+      loading,
+      pagination,
+      ebooks,
+      ebook,
+      modalVisible,
+      modalLoading,
+      handleModalOk,
+      handleTableChange,
+      edit,
+      add,
+    };
   },
 });
 </script>
 
-<style scoped></style>
+<style scoped>
+.img-cover {
+  width: 100px;
+  height: 100px;
+}
+</style>
