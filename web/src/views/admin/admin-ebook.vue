@@ -2,7 +2,7 @@
  * @Author: GZH
  * @Date: 2021-07-14 20:11:02
  * @LastEditors: GZH
- * @LastEditTime: 2021-07-17 10:38:38
+ * @LastEditTime: 2021-07-17 12:29:30
  * @FilePath: \web\src\views\admin\admin-ebook.vue
  * @Description: 
 -->
@@ -10,7 +10,17 @@
   <a-layout>
     <a-layout-content :style="{ background: '#fff', padding: '24px', margin: 0, minHeight: '280px' }">
       <p>
-        <a-button type="primary" @click="add()">新增</a-button>
+        <a-form layout="inline" :model="param">
+          <a-form-item>
+            <a-input v-model:value="param.name" placeholder="名称"></a-input>
+          </a-form-item>
+          <a-form-item>
+            <a-button type="primary" @click="handleQuery({ page: 1, size: pagination.pageSize })">查询</a-button>
+          </a-form-item>
+          <a-form-item>
+            <a-button type="primary" @click="add()">新增</a-button>
+          </a-form-item>
+        </a-form>
       </p>
       <a-table
         :columns="columns"
@@ -69,14 +79,16 @@
 import axios from 'axios';
 import { defineComponent, onMounted, ref } from 'vue';
 import { message } from 'ant-design-vue';
+import { Tool } from '@/util/tool';
 
 export default defineComponent({
   name: 'adminEbook',
   setup() {
+    const param = ref({ name: '' });
     const loading = ref(false);
     const pagination = ref({
       current: 1,
-      pageSize: 4,
+      pageSize: 10,
       total: 0,
     });
     const ebooks = ref();
@@ -128,6 +140,7 @@ export default defineComponent({
           params: {
             page: params.page,
             size: params.size,
+            name: param.value.name,
           },
         })
         .then(response => {
@@ -157,11 +170,6 @@ export default defineComponent({
     const modalVisible = ref(false);
     const modalLoading = ref(false);
     const handleModalOk = () => {
-      // modalLoading.value = true;
-      // setTimeout(() => {
-      //   modalLoading.value = false;
-      //   modalVisible.value = false;
-      // }, 2000);
       axios.post('/ebook/save', ebook.value).then(response => {
         modalLoading.value = false;
         const data = response.data; // data = commonResp
@@ -180,7 +188,8 @@ export default defineComponent({
     };
     const edit = (record: any) => {
       modalVisible.value = true;
-      ebook.value = record;
+      ebook.value = Tool.copy(record);
+      // ebook.value = record;
     };
 
     /* 新增 */
@@ -205,6 +214,7 @@ export default defineComponent({
       });
     };
     return {
+      param,
       columns,
       loading,
       pagination,
@@ -217,6 +227,7 @@ export default defineComponent({
       edit,
       add,
       handleDelete,
+      handleQuery,
     };
   },
 });
