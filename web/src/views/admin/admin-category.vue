@@ -2,7 +2,7 @@
  * @Author: GZH
  * @Date: 2021-07-14 20:11:02
  * @LastEditors: GZH
- * @LastEditTime: 2021-07-17 14:32:54
+ * @LastEditTime: 2021-07-17 15:21:14
  * @FilePath: \web\src\views\admin\admin-category.vue
  * @Description: 
 -->
@@ -10,12 +10,9 @@
   <a-layout>
     <a-layout-content :style="{ background: '#fff', padding: '24px', margin: 0, minHeight: '280px' }">
       <p>
-        <a-form layout="inline" :model="param">
+        <a-form layout="inline">
           <a-form-item>
-            <a-input v-model:value="param.name" placeholder="名称"></a-input>
-          </a-form-item>
-          <a-form-item>
-            <a-button type="primary" @click="handleQuery({ page: 1, size: pagination.pageSize })">查询</a-button>
+            <a-button type="primary" @click="handleQuery()">查询</a-button>
           </a-form-item>
           <a-form-item>
             <a-button type="primary" @click="add()">新增</a-button>
@@ -25,10 +22,9 @@
       <a-table
         :columns="columns"
         :row-key="record => record.id"
-        :data-source="categorys"
-        :pagination="pagination"
+        :data-source="level1"
         :loading="loading"
-        @change="handleTableChange"
+        :pagination="false"
       >
         <template #cover="{ text: cover }">
           <img v-if="cover" :src="cover" alt="avatar" class="img-cover" />
@@ -59,7 +55,15 @@
         <a-input v-model:value="category.name" />
       </a-form-item>
       <a-form-item label="父分类">
-        <a-input v-model:value="category.parent" />
+        <!-- <a-input v-model:value="category.parent" /> -->
+        <a-select v-model:value="category.parent" ref="select">
+          <a-select-option :value="0">
+            无
+          </a-select-option>
+          <a-select-option v-for="c in level1" :key="c.id" :value="c.id" :disabled="category.id === c.id">
+            {{ c.name }}
+          </a-select-option>
+        </a-select>
       </a-form-item>
       <a-form-item label="顺序">
         <a-input v-model:value="category.sort" />
@@ -70,20 +74,14 @@
 
 <script lang="ts">
 import axios from 'axios';
-import { defineComponent, onMounted, ref } from 'vue';
+import { defineComponent, onMounted, Ref, ref } from 'vue';
 import { message } from 'ant-design-vue';
 import { Tool } from '@/util/tool';
 
 export default defineComponent({
   name: 'adminCategory',
   setup() {
-    const param = ref({ name: '' });
     const loading = ref(false);
-    const pagination = ref({
-      current: 1,
-      pageSize: 10,
-      total: 0,
-    });
     const categorys = ref();
 
     const columns = [
@@ -107,43 +105,29 @@ export default defineComponent({
       },
     ];
 
+    const level1: Ref<unknown[]> = ref([]); // 一级分类树，children属性就是二级分类
     /**
      * 数据查询
      **/
     onMounted(() => {
-      handleQuery({ page: 1, size: pagination.value.pageSize });
+      handleQuery();
     });
-    const handleQuery = (params: any) => {
+    const handleQuery = () => {
       loading.value = true;
       // 如果不清空现有数据，则编辑保存重新加载数据后，再点编辑，则列表显示的还是编辑前的数据
       categorys.value = [];
-      axios
-        .get('/category/list', {
-          params: {
-            page: params.page,
-            size: params.size,
-            name: param.value.name,
-          },
-        })
-        .then(response => {
-          loading.value = false;
-          const data = response.data;
-          if (data.success) {
-            categorys.value = data.content.list;
+      axios.get('/category/all').then(response => {
+        loading.value = false;
+        const data = response.data;
+        if (data.success) {
+          categorys.value = data.content;
 
-            // 重置分页按钮
-            pagination.value.current = params.page;
-            pagination.value.total = data.content.total;
-          } else {
-            message.error(data.message);
-          }
-        });
-    };
-    const handleTableChange = (pagination: any) => {
-      console.log('自带的分页参数：' + pagination);
-      handleQuery({
-        page: pagination.current,
-        size: pagination.pageSize,
+          level1.value = [];
+          level1.value = Tool.array2Tree(categorys.value, 0);
+          console.log('树形结构：', level1);
+        } else {
+          message.error(data.message);
+        }
       });
     };
 
@@ -159,10 +143,7 @@ export default defineComponent({
           modalVisible.value = false;
 
           // 重新加载列表
-          handleQuery({
-            page: pagination.value.current,
-            size: pagination.value.pageSize,
-          });
+          handleQuery();
         } else {
           message.error(data.message);
         }
@@ -186,26 +167,21 @@ export default defineComponent({
         const data = response.data; // data = commonResp
         if (data.success) {
           // 重新加载列表
-          handleQuery({
-            page: pagination.value.current,
-            size: pagination.value.pageSize,
-          });
+          handleQuery();
         } else {
           message.error(data.message);
         }
       });
     };
     return {
-      param,
       columns,
       loading,
-      pagination,
-      categorys,
+      // categorys,
+      level1,
       category,
       modalVisible,
       modalLoading,
       handleModalOk,
-      handleTableChange,
       edit,
       add,
       handleDelete,
