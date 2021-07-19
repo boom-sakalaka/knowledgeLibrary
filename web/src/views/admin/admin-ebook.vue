@@ -2,7 +2,7 @@
  * @Author: GZH
  * @Date: 2021-07-14 20:11:02
  * @LastEditors: GZH
- * @LastEditTime: 2021-07-17 15:44:32
+ * @LastEditTime: 2021-07-19 21:30:05
  * @FilePath: \web\src\views\admin\admin-ebook.vue
  * @Description: 
 -->
@@ -38,6 +38,12 @@
         </template>
         <template v-slot:action="{ record }">
           <a-space size="small">
+            <router-link to="/admin/doc">
+              <a-button type="primary">
+                文档管理
+              </a-button>
+            </router-link>
+
             <a-button type="primary" @click="edit(record)">
               编辑
             </a-button>
