@@ -2,7 +2,7 @@
  * @Author: GZH
  * @Date: 2021-07-14 20:11:02
  * @LastEditors: GZH
- * @LastEditTime: 2021-07-21 20:33:08
+ * @LastEditTime: 2021-07-21 20:41:41
  * @FilePath: \web\src\views\admin\admin-doc.vue
  * @Description: 
 -->
@@ -87,10 +87,19 @@ import axios from 'axios';
 import { defineComponent, onMounted, Ref, ref } from 'vue';
 import { message } from 'ant-design-vue';
 import { Tool } from '@/util/tool';
+import { useRoute } from 'vue-router';
 
 export default defineComponent({
   name: 'adminDoc',
   setup() {
+    const route = useRoute();
+    console.log('路由：', route);
+    console.log('route.path：', route.path);
+    console.log('route.query：', route.query);
+    console.log('route.param：', route.params);
+    console.log('route.fullPath：', route.fullPath);
+    console.log('route.name：', route.name);
+    console.log('route.meta：', route.meta);
     const loading = ref(false);
     const docs = ref();
     // 因为树选择组件的属性状态，会随当前编辑的节点而变化，所以单独声明一个响应式变量
@@ -215,7 +224,9 @@ export default defineComponent({
     /* 新增 */
     const add = () => {
       modalVisible.value = true;
-      doc.value = {};
+      doc.value = {
+        ebookId: route.query.ebookId,
+      };
     };
 
     /* 删除 */
