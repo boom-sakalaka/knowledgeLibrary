@@ -2,7 +2,7 @@
  * @Author: GZH
  * @Date: 2021-07-14 20:11:02
  * @LastEditors: GZH
- * @LastEditTime: 2021-07-21 20:48:25
+ * @LastEditTime: 2021-07-22 20:55:16
  * @FilePath: \web\src\views\admin\admin-doc.vue
  * @Description: 
 -->
@@ -47,25 +47,23 @@
           </a-space>
         </template>
       </a-table>
-    </a-layout-content>
-  </a-layout>
-  <a-modal title="文档" v-model:visible="modalVisible" :comfirm-loading="modalLoading" @ok="handleModalOk">
-    <a-form :model="doc" :label-col="{ span: 6 }" :wrapper-col="{ span: 18 }">
-      <a-form-item label="名称">
-        <a-input v-model:value="doc.name" />
-      </a-form-item>
-      <a-form-item label="父文档">
-        <a-tree-select
-          v-model:value="doc.parent"
-          style="width: 100%"
-          :dropdown-style="{ maxHeight: '400px', overflow: 'auto' }"
-          :tree-data="treeSelectData"
-          placeholder="请选择父文档"
-          tree-default-expand-all
-          :replaceFields="{ title: 'name', key: 'id', value: 'id' }"
-        ></a-tree-select>
-      </a-form-item>
-      <!-- <a-form-item label="父文档">
+      <a-modal title="文档" v-model:visible="modalVisible" :comfirm-loading="modalLoading" @ok="handleModalOk">
+        <a-form :model="doc" :label-col="{ span: 6 }" :wrapper-col="{ span: 18 }">
+          <a-form-item label="名称">
+            <a-input v-model:value="doc.name" />
+          </a-form-item>
+          <a-form-item label="父文档">
+            <a-tree-select
+              v-model:value="doc.parent"
+              style="width: 100%"
+              :dropdown-style="{ maxHeight: '400px', overflow: 'auto' }"
+              :tree-data="treeSelectData"
+              placeholder="请选择父文档"
+              tree-default-expand-all
+              :replaceFields="{ title: 'name', key: 'id', value: 'id' }"
+            ></a-tree-select>
+          </a-form-item>
+          <!-- <a-form-item label="父文档">
         <a-select v-model:value="doc.parent" ref="select">
           <a-select-option :value="0">
             无
@@ -75,11 +73,16 @@
           </a-select-option>
         </a-select>
       </a-form-item> -->
-      <a-form-item label="顺序">
-        <a-input v-model:value="doc.sort" />
-      </a-form-item>
-    </a-form>
-  </a-modal>
+          <a-form-item label="顺序">
+            <a-input v-model:value="doc.sort" />
+          </a-form-item>
+          <a-form-item label="内容">
+            <div id="div1"></div>
+          </a-form-item>
+        </a-form>
+      </a-modal>
+    </a-layout-content>
+  </a-layout>
 </template>
 
 <script lang="ts">
@@ -89,6 +92,7 @@ import { message, Modal } from 'ant-design-vue';
 import { Tool } from '@/util/tool';
 import { useRoute } from 'vue-router';
 import ExclamationCircleOutlined from '@ant-design/icons-vue/ExclamationCircleOutlined';
+import E from 'wangeditor';
 
 export default defineComponent({
   name: 'adminDoc',
@@ -132,8 +136,10 @@ export default defineComponent({
     /**
      * 数据查询
      **/
+    let editor: any;
     onMounted(() => {
       handleQuery();
+      // 富文本框初始化
     });
     const handleQuery = () => {
       loading.value = true;
@@ -220,6 +226,12 @@ export default defineComponent({
 
       // 为选择树添加一个"无"
       treeSelectData.value.unshift({ id: 0, name: '无' });
+      setTimeout(() => {
+        if (!editor) {
+          editor = new E(document.getElementById('div1'));
+        }
+        editor.create();
+      });
     };
 
     /* 新增 */
@@ -228,6 +240,12 @@ export default defineComponent({
       doc.value = {
         ebookId: route.query.ebookId,
       };
+      setTimeout(() => {
+        if (!editor) {
+          editor = new E(document.getElementById('div1'));
+        }
+        editor.create();
+      });
     };
 
     /* 删除 */
