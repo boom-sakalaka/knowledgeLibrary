@@ -2,7 +2,7 @@
  * @Author: GZH
  * @Date: 2021-07-14 20:11:02
  * @LastEditors: GZH
- * @LastEditTime: 2021-07-26 21:46:11
+ * @LastEditTime: 2021-07-26 23:14:27
  * @FilePath: \web\src\views\admin\admin-doc.vue
  * @Description: 
 -->
@@ -94,6 +94,16 @@
         </a-col>
       </a-row>
 
+      <a-drawer
+        width="900"
+        placement="right"
+        :closable="false"
+        :visible="drawerVisible"
+        @close="onDrawerClose"
+        zIndex="200000"
+      >
+        <div class="wangeditor" :innerHTML="previewHtml"></div>
+      </a-drawer>
       <!-- <a-modal
         title="文档"
         v-model:visible="modalVisible"
@@ -158,7 +168,7 @@ export default defineComponent({
       loading.value = true;
       // 如果不清空现有数据，则编辑保存重新加载数据后，再点编辑，则列表显示的还是编辑前的数据
       docs.value = [];
-      axios.get('/doc/all').then(response => {
+      axios.get('/doc/all/' + route.query.ebookId).then(response => {
         loading.value = false;
         const data = response.data;
         if (data.success) {
@@ -180,18 +190,23 @@ export default defineComponent({
 
     /* 弹框代码 */
 
-    const doc = ref<{ content?: string; ebookId?: any; id?: any }>({});
+    const doc = ref();
+    doc.value = {
+      ebookId: route.query.ebookId,
+    };
     const modalVisible = ref(false);
     const modalLoading = ref(false);
 
     const handleSave = () => {
-      doc.value.content = editor.txt.html('');
+      modalLoading.value = true;
+      doc.value.content = editor.txt.html();
       axios.post('/doc/save', doc.value).then(response => {
         modalLoading.value = false;
         const data = response.data; // data = commonResp
         if (data.success) {
           // modalVisible.value = false;
-          message.success('保存成功!');
+          message.success('保存成功！');
+
           // 重新加载列表
           handleQuery();
         } else {
@@ -245,14 +260,21 @@ export default defineComponent({
       treeSelectData.value.unshift({ id: 0, name: '无' });
     };
 
-    /* 新增 */
+    /**
+     * 新增
+     */
     const add = () => {
       // 清空富文本框
       editor.txt.html('');
-      // modalVisible.value = true;
+      modalVisible.value = true;
       doc.value = {
         ebookId: route.query.ebookId,
       };
+
+      treeSelectData.value = Tool.copy(level1.value) || [];
+
+      // 为选择树添加一个"无"
+      treeSelectData.value.unshift({ id: 0, name: '无' });
     };
 
     /* 删除 */
@@ -329,7 +351,17 @@ export default defineComponent({
         }
       });
     };
-
+    // ----------------富文本预览--------------
+    const drawerVisible = ref(false);
+    const previewHtml = ref();
+    const handlePreviewContent = () => {
+      const html = editor.txt.html();
+      previewHtml.value = html;
+      drawerVisible.value = true;
+    };
+    const onDrawerClose = () => {
+      drawerVisible.value = false;
+    };
     return {
       columns,
       loading,
@@ -344,6 +376,11 @@ export default defineComponent({
       add,
       handleDelete,
       handleQuery,
+
+      drawerVisible,
+      previewHtml,
+      handlePreviewContent,
+      onDrawerClose,
     };
   },
 });

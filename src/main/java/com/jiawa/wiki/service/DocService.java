@@ -69,13 +69,14 @@ public class DocService {
         pageResp.setList(list);
         return pageResp;
     }
-    public List<DocQueryResp> all() {
+
+    public List<DocQueryResp> all(Long ebookId) {
         DocExample docExample = new DocExample();
+        docExample.createCriteria().andEbookIdEqualTo(ebookId);
         docExample.setOrderByClause("sort asc");
-        List<Doc> docs = docMapper.selectByExample(docExample);
-
-        List<DocQueryResp> list = CopyUtil.copyList(docs, DocQueryResp.class);
-
+        List<Doc> docList = docMapper.selectByExample(docExample);
+        // 列表复制
+        List<DocQueryResp> list = CopyUtil.copyList(docList, DocQueryResp.class);
         return list;
     }
     /**
@@ -112,7 +113,7 @@ public class DocService {
 
     public String findContent(Long id) {
         Content content = contentMapper.selectByPrimaryKey(id);
-        
+
         if (ObjectUtils.isEmpty(content)) {
             return "";
         } else {

@@ -2,7 +2,7 @@
  * @Author: GZH
  * @Date: 2021-07-12 21:53:00
  * @LastEditors: GZH
- * @LastEditTime: 2021-07-19 21:28:22
+ * @LastEditTime: 2021-07-26 22:06:09
  * @FilePath: \web\src\router\index.ts
  * @Description:
  */
@@ -14,6 +14,11 @@ const routes: Array<RouteRecordRaw> = [
     path: '/',
     name: 'Home',
     component: Home,
+  },
+  {
+    path: '/doc',
+    name: 'Doc',
+    component: () => import(/* webpackChunkName: "Doc" */ '../views/doc.vue'),
   },
   {
     path: '/about',
