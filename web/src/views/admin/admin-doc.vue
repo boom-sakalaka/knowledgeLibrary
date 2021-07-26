@@ -2,7 +2,7 @@
  * @Author: GZH
  * @Date: 2021-07-14 20:11:02
  * @LastEditors: GZH
- * @LastEditTime: 2021-07-26 21:25:47
+ * @LastEditTime: 2021-07-26 21:46:11
  * @FilePath: \web\src\views\admin\admin-doc.vue
  * @Description: 
 -->
@@ -180,18 +180,18 @@ export default defineComponent({
 
     /* 弹框代码 */
 
-    const doc = ref<{ content?: string; ebookId?: any }>({});
+    const doc = ref<{ content?: string; ebookId?: any; id?: any }>({});
     const modalVisible = ref(false);
     const modalLoading = ref(false);
 
     const handleSave = () => {
-      doc.value.content = editor.txt.html();
+      doc.value.content = editor.txt.html('');
       axios.post('/doc/save', doc.value).then(response => {
         modalLoading.value = false;
         const data = response.data; // data = commonResp
         if (data.success) {
-          modalVisible.value = false;
-
+          // modalVisible.value = false;
+          message.success('保存成功!');
           // 重新加载列表
           handleQuery();
         } else {
@@ -231,10 +231,12 @@ export default defineComponent({
       }
     };
     const edit = (record: any) => {
+      // 清空富文本框
+      editor.txt.html('');
       modalVisible.value = true;
       doc.value = Tool.copy(record);
       // doc.value = record;
-
+      handleQueryContent();
       // 不能选择当前节点及其所有子孙节点，作为父节点，会使树断开
       treeSelectData.value = Tool.copy(level1.value);
       setDisable(treeSelectData.value, record.id);
@@ -245,7 +247,9 @@ export default defineComponent({
 
     /* 新增 */
     const add = () => {
-      modalVisible.value = true;
+      // 清空富文本框
+      editor.txt.html('');
+      // modalVisible.value = true;
       doc.value = {
         ebookId: route.query.ebookId,
       };
@@ -312,6 +316,20 @@ export default defineComponent({
         }
       }
     };
+    /**
+     * 内容查询
+     **/
+    const handleQueryContent = () => {
+      axios.get('/doc/find-content/' + doc.value.id).then(response => {
+        const data = response.data;
+        if (data.success) {
+          editor.txt.html(data.content);
+        } else {
+          message.error(data.message);
+        }
+      });
+    };
+
     return {
       columns,
       loading,
