@@ -2,7 +2,7 @@
  * @Author: GZH
  * @Date: 2021-07-13 06:59:24
  * @LastEditors: GZH
- * @LastEditTime: 2021-07-29 22:30:01
+ * @LastEditTime: 2021-07-29 22:40:27
  * @FilePath: \web\src\components\the-header.vue
  * @Description: 
 -->
@@ -49,32 +49,73 @@
   </a-layout-header>
 </template>
 
-<script>
-import { defineComponent, ref } from 'vue';
+<script lang="ts">
+import { defineComponent, ref, computed } from 'vue';
+import axios from 'axios';
+import { message } from 'ant-design-vue';
+import store from '@/store';
+
+declare let hexMd5: any;
+declare let KEY: any;
+
 export default defineComponent({
   name: 'the-header',
   setup() {
+    // 登录后保存
+    const user = computed(() => store.state.user);
+
     // 用来登录
     const loginUser = ref({
       loginName: 'test',
       password: 'test',
     });
-
     const loginModalVisible = ref(false);
     const loginModalLoading = ref(false);
     const showLoginModal = () => {
       loginModalVisible.value = true;
     };
 
+    // 登录
     const login = () => {
-      console.log('登录中');
+      console.log('开始登录');
+      loginModalLoading.value = true;
+      loginUser.value.password = hexMd5(loginUser.value.password + KEY);
+      axios.post('/user/login', loginUser.value).then(response => {
+        loginModalLoading.value = false;
+        const data = response.data;
+        if (data.success) {
+          loginModalVisible.value = false;
+          message.success('登录成功！');
+
+          store.commit('setUser', data.content);
+        } else {
+          message.error(data.message);
+        }
+      });
     };
+
+    // 退出登录
+    const logout = () => {
+      console.log('退出登录开始');
+      axios.get('/user/logout/' + user.value.token).then(response => {
+        const data = response.data;
+        if (data.success) {
+          message.success('退出登录成功！');
+          store.commit('setUser', {});
+        } else {
+          message.error(data.message);
+        }
+      });
+    };
+
     return {
       loginModalVisible,
       loginModalLoading,
-      loginUser,
       showLoginModal,
+      loginUser,
       login,
+      user,
+      logout,
     };
   },
 });
