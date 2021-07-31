@@ -2,7 +2,7 @@
  * @Author: GZH
  * @Date: 2021-07-13 06:59:24
  * @LastEditors: GZH
- * @LastEditTime: 2021-07-29 22:40:27
+ * @LastEditTime: 2021-07-31 22:30:24
  * @FilePath: \web\src\components\the-header.vue
  * @Description: 
 -->
@@ -15,13 +15,13 @@
           <a-menu-item key="/">
             <router-link to="/">首页</router-link>
           </a-menu-item>
-          <a-menu-item key="/admin/user">
+          <a-menu-item key="/admin/user" :style="user.id ? {} : { display: 'none' }">
             <router-link to="/admin/user">用户管理</router-link>
           </a-menu-item>
-          <a-menu-item key="/admin/ebook">
+          <a-menu-item key="/admin/ebook" :style="user.id ? {} : { display: 'none' }">
             <router-link to="/admin/ebook">电子书管理</router-link>
           </a-menu-item>
-          <a-menu-item key="/admin/category">
+          <a-menu-item key="/admin/category" :style="user.id ? {} : { display: 'none' }">
             <router-link to="/admin/category">分类管理</router-link>
           </a-menu-item>
           <a-menu-item key="/about">
@@ -30,7 +30,15 @@
         </a-menu>
       </div>
       <div>
-        <a class="login-menu" @click="showLoginModal">
+        <a-popconfirm title="确认退出登录?" ok-text="是" cancel-text="否" @confirm="logout()">
+          <a class="login-menu" v-show="user.id">
+            <span>退出登录</span>
+          </a>
+        </a-popconfirm>
+        <a class="login-menu" v-show="user.id">
+          <span>您好：{{ user.name }}</span>
+        </a>
+        <a class="login-menu" v-show="!user.id" @click="showLoginModal">
           <span>登录</span>
         </a>
       </div>
